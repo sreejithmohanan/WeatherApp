@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'android-apt'
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "23.0.1"
     defaultConfig {
-        applicationId "com.sree.weaterapp"
+        applicationId "com.sree.weatherapp"
         minSdkVersion 21
-        targetSdkVersion 23
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -35,4 +35,6 @@ dependencies {
     compile 'com.google.android.gms:play-services:9.2.1'
     compile 'com.google.android.gms:play-services-auth:9.2.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.jakewharton:butterknife:8.4.0'
+
 }
