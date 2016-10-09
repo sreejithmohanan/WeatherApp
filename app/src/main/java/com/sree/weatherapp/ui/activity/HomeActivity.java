@@ -1,4 +1,4 @@
-package com.sree.weatherapp.ui;
+package com.sree.weatherapp.ui.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
