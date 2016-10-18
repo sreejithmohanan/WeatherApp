@@ -2,6 +2,7 @@ package com.sree.weatherapp.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -17,7 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.squareup.okhttp.OkHttpClient;
 import com.sree.weatherapp.R;
+import com.sree.weatherapp.WeatherApplication;
 import com.sree.weatherapp.controlers.WeatherDataProcessor;
 import com.sree.weatherapp.ui.adapter.HomePagerAdapter;
 import com.sree.weatherapp.ui.common.OnListFragmentInteractionListener;
@@ -32,8 +35,11 @@ import com.sree.weatherapp.webservice.responsebean.WeatherSummery;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Retrofit;
 
 import static com.sree.weatherapp.common.AppConstants.IntentConstants.WEATHER_INFO;
 import static com.sree.weatherapp.common.AppConstants.IntentConstants.WEATHER_SUMMERY;
@@ -48,13 +54,18 @@ public class HomeActivity extends AppCompatActivity implements OnListFragmentInt
     protected ViewPager mViewPager;
     @BindView(R.id.progress_layout)
     protected FrameLayout progressView;
+    @Inject
+    Retrofit retrofit;
+    @Inject
+    SharedPreferences sharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_home);
         ButterKnife.bind(this);
-
+        ((WeatherApplication) getApplication()).getWebServiceComponent().inject(this);
         updateWeatherData();
     }
 
@@ -91,7 +102,7 @@ public class HomeActivity extends AppCompatActivity implements OnListFragmentInt
 
                 progressView.setVisibility(View.GONE);
             }
-        });
+        },retrofit);
         weatherDataProcessor.requestForWeatherUpdate(this);
     }
 

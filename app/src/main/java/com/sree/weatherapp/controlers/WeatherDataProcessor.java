@@ -12,6 +12,7 @@ import com.sree.weatherapp.webservice.responsebean.WeatherSummery;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 /**
  * Controller class for handle the location data and web service response. It will give call back to
@@ -21,9 +22,10 @@ public class WeatherDataProcessor implements LocationProvider.InLocationUpdateLi
     private static WeatherDataProcessor ourInstance = new WeatherDataProcessor();
     public static final String TAG = "WeatherDataProcessor";
     private IDataProvider dataProvider;
-
-    public void setDataProvider(IDataProvider dataProvider) {
+    Retrofit retrofit;
+    public void setDataProvider(IDataProvider dataProvider,Retrofit retrofit) {
         this.dataProvider = dataProvider;
+        this.retrofit=retrofit;
 
     }
 
@@ -62,8 +64,7 @@ public class WeatherDataProcessor implements LocationProvider.InLocationUpdateLi
      * @param currentLocation
      */
     private void getWeatherUpdate(String currentLocation) {
-        ApiInterface apiService =
-                ApiClient.getApiClient().create(ApiInterface.class);
+               ApiInterface apiService =retrofit.create(ApiInterface.class);
 
         Call<WeatherSummery> call = apiService.getWeatherUpdate(AppConstants.WebServiceConstants.API_KEY, currentLocation);
         call.enqueue(new Callback<WeatherSummery>() {
