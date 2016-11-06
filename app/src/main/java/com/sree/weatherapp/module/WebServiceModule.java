@@ -3,19 +3,12 @@ package com.sree.weatherapp.module;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.sree.weatherapp.WeatherApplication;
+import com.sree.weatherapp.app.WeatherApplication;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 @Module
@@ -33,7 +26,7 @@ public class WebServiceModule {
         return PreferenceManager.getDefaultSharedPreferences(application);
     }
 
-    @Provides
+    /*@Provides
     @Singleton
     Cache provideOkHttpCache(WeatherApplication application) {
         int cacheSize = 10 * 1024 * 1024; // 10 MiB
@@ -66,4 +59,4 @@ public class WebServiceModule {
                 .build();
         return retrofit;
     }
-}
+*/}

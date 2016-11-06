@@ -1,51 +1,189 @@
 package com.sree.weatherapp.ui.activity;
 
+import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.FrameLayout;
 
-import com.squareup.okhttp.OkHttpClient;
+import com.google.gson.Gson;
 import com.sree.weatherapp.R;
-import com.sree.weatherapp.WeatherApplication;
-import com.sree.weatherapp.controlers.WeatherDataProcessor;
-import com.sree.weatherapp.ui.adapter.HomePagerAdapter;
-import com.sree.weatherapp.ui.common.OnListFragmentInteractionListener;
-import com.sree.weatherapp.ui.core.BaseFragment;
-import com.sree.weatherapp.ui.fragments.CurrentWeatherInfoFragment;
-import com.sree.weatherapp.ui.fragments.DailyWeatherInfoFragment;
-import com.sree.weatherapp.ui.fragments.HourlyWeatherInfoFragment;
-import com.sree.weatherapp.ui.fragments.WeatherDetailFragment;
-import com.sree.weatherapp.webservice.responsebean.WeatherInfo;
-import com.sree.weatherapp.webservice.responsebean.WeatherSummery;
+import com.sree.weatherapp.app.AppDependencies;
+import com.sree.weatherapp.app.DaggerScope;
+import com.sree.weatherapp.app.DaggerService;
+import com.sree.weatherapp.app.WeatherApplication;
+import com.sree.weatherapp.flow.GsonParceler;
+import com.sree.weatherapp.flow.HandlesBack;
+import com.sree.weatherapp.ui.screen.CurrentWeatherInfoScreen;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Retrofit;
+import butterknife.InjectView;
+import flow.Flow;
+import flow.FlowDelegate;
+import flow.History;
+import flow.path.Path;
+import flow.path.PathContainerView;
+import mortar.MortarScope;
+import mortar.bundler.BundleServiceRunner;
 
-import static com.sree.weatherapp.common.AppConstants.IntentConstants.WEATHER_INFO;
-import static com.sree.weatherapp.common.AppConstants.IntentConstants.WEATHER_SUMMERY;
+public class HomeActivity extends Activity implements Flow.Dispatcher {
 
-public class HomeActivity extends AppCompatActivity implements OnListFragmentInteractionListener{
+    MortarScope mortarScope;
+    FlowDelegate flowDelegate;
+    @InjectView(R.id.container)
+    PathContainerView pathContainerView;
+
+    @Override
+    public Object getSystemService(String name) {
+
+        if (getApplication() == null) {
+            return super.getSystemService(name);
+        }
+        Object service = null;
+
+        if (flowDelegate != null) {
+            service = flowDelegate.getSystemService(name);
+        }
+
+        if (service == null && mortarScope != null && mortarScope.hasService(name)) {
+            service = mortarScope.getService(name);
+        }
+        return service != null ? service : super.getSystemService(name);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mortarScope = MortarScope.findChild(getApplicationContext(), getClass().getName());
+
+        if (mortarScope == null) {
+            Component component = DaggerHomeActivity_Component.builder()
+                    .component(DaggerService.<WeatherApplication.Component>getDaggerComponent(getApplicationContext()))
+                    .build();
+
+            mortarScope = mortarScope.buildChild(getApplicationContext()).withService(BundleServiceRunner.SERVICE_NAME, new BundleServiceRunner())
+                    .withService(DaggerService.SERVICE_NAME, component).build(getClass().getName());
+
+        }
+
+        DaggerService.<Component>getDaggerComponent(this).inject(this);
+
+        BundleServiceRunner.getBundleServiceRunner(this).onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_home);
+          ButterKnife.inject(this);
+
+        GsonParceler parceler = new GsonParceler(new Gson());
+
+        @SuppressWarnings("deprecation") FlowDelegate.NonConfigurationInstance nonConfig =
+                (FlowDelegate.NonConfigurationInstance) getLastNonConfigurationInstance();
+        flowDelegate = FlowDelegate.onCreate(nonConfig, getIntent(), savedInstanceState, parceler, History.single(new CurrentWeatherInfoScreen()), this);
+
+    }
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        flowDelegate.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        flowDelegate.onPause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        BundleServiceRunner.getBundleServiceRunner(this).onSaveInstanceState(outState);
+        flowDelegate.onSaveInstanceState(outState);
+    }
+
+    @SuppressWarnings("deprecation") // https://code.google.com/p/android/issues/detail?id=151346
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        return flowDelegate.onRetainNonConfigurationInstance();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (isFinishing()) {
+            MortarScope activityScope = MortarScope.findChild(getApplicationContext(), getClass().getName());
+            if (activityScope != null) {
+                activityScope.destroy();
+            }
+        }
+
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (((HandlesBack) pathContainerView).onBackPressed()) return;
+        if (flowDelegate.onBackPressed()) return;
+
+        super.onBackPressed();
+    }
+
+    // Flow.Dispatcher
+
+    @Override
+    public void dispatch(Flow.Traversal traversal, final Flow.TraversalCallback callback) {
+        Path path = traversal.destination.top();
+        setTitle(path.getClass().getSimpleName());
+        ActionBar actionBar = getActionBar();
+        boolean canGoBack = traversal.destination.size() > 1;
+        actionBar.setDisplayHomeAsUpEnabled(canGoBack);
+        actionBar.setHomeButtonEnabled(canGoBack);
+
+        pathContainerView.dispatch(traversal, new Flow.TraversalCallback() {
+            @Override
+            public void onTraversalCompleted() {
+                invalidateOptionsMenu();
+                callback.onTraversalCompleted();
+            }
+        });
+    }
+
+
+
+    @dagger.Component(dependencies = WeatherApplication.Component.class)
+    @DaggerScope(Component.class)
+    public interface Component extends AppDependencies {
+        void inject(HomeActivity activity);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
+    }
+
+}
+
+
+
+
+
+
+
+
+ /*       extends AppCompatActivity implements OnListFragmentInteractionListener{
        // implements NavigationView.OnNavigationItemSelectedListener, OnListFragmentInteractionListener {
+
 
 
     public static final int RESULT_CODE = 0x1;
@@ -65,7 +203,7 @@ public class HomeActivity extends AppCompatActivity implements OnListFragmentInt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_home);
         ButterKnife.bind(this);
-        ((WeatherApplication) getApplication()).getWebServiceComponent().inject(this);
+    //    ((WeatherApplication) getApplication()).getWebServiceComponent().inject(this);
         updateWeatherData();
     }
 
@@ -83,9 +221,11 @@ public class HomeActivity extends AppCompatActivity implements OnListFragmentInt
         fragmentTransaction.commit();
     }
 
-    /**
+    */
+/**
      * Request model class for weather data update.
-     */
+     *//*
+
     private void updateWeatherData() {
         progressView.setVisibility(View.VISIBLE);
         WeatherDataProcessor weatherDataProcessor = WeatherDataProcessor.getInstance();
@@ -117,12 +257,14 @@ public class HomeActivity extends AppCompatActivity implements OnListFragmentInt
         return super.onOptionsItemSelected(item);
     }
 
-    /**
+    */
+/**
      * Create fragments for pager adapter.
      *
      * @param weatherSummery
      * @return
-     */
+     *//*
+
     public List<BaseFragment> createFragments(WeatherSummery weatherSummery) {
         List<BaseFragment> fragments = new ArrayList<>();
         BaseFragment weatherInfoFragment;
@@ -171,6 +313,7 @@ public class HomeActivity extends AppCompatActivity implements OnListFragmentInt
     }
 }
 
+*/
 
    /* @Override
     protected void onCreate(Bundle savedInstanceState) {

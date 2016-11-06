@@ -1,5 +1,6 @@
 package com.sree.weatherapp.component;
 
+/*
 import com.sree.weatherapp.module.AppModule;
 import com.sree.weatherapp.module.WebServiceModule;
 import com.sree.weatherapp.ui.activity.HomeActivity;
@@ -14,3 +15,4 @@ import dagger.Component;
 public interface WebServiceComponent {
     void inject(HomeActivity activity);
 }
+*/

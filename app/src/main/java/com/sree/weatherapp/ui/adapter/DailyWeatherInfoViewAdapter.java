@@ -18,8 +18,8 @@ import com.sree.weatherapp.webservice.responsebean.WeatherInfo;
 
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 /**
  * Adapter class for binding daily weather information with view.
@@ -73,18 +73,18 @@ public class DailyWeatherInfoViewAdapter extends RecyclerView.Adapter<DailyWeath
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.img_weather_status)
+        @InjectView(R.id.img_weather_status)
         public ImageView weatherIcon;
-        @BindView(R.id.txt_weatherInfo)
+        @InjectView(R.id.txt_weatherInfo)
         public TextView mWeatherInfo;
-        @BindView(R.id.txt_time)
+        @InjectView(R.id.txt_time)
         public TextView weatherUpdateTime;
         public WeatherInfo mItem;
         public View mView;
 
         public ViewHolder(View view) {
             super(view);
-            ButterKnife.bind(this, view);
+            ButterKnife.inject(this, view);
             mView = view;
         }
 

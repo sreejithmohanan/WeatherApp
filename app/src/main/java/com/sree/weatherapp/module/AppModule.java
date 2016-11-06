@@ -1,6 +1,6 @@
 package com.sree.weatherapp.module;
 
-import com.sree.weatherapp.WeatherApplication;
+import com.sree.weatherapp.app.WeatherApplication;
 
 import javax.inject.Singleton;
 

@@ -15,14 +15,14 @@ import com.sree.weatherapp.ui.common.OnListFragmentInteractionListener;
 import com.sree.weatherapp.ui.core.BaseFragment;
 import com.sree.weatherapp.webservice.responsebean.WeatherInfo;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * Fragment show the current weather information.
  */
-public class CurrentWeatherInfoFragment extends BaseFragment {
-    @BindView(R.id.txt_current_temperature)
+public class CurrentWeatherInfoFragment{
+    /*     extends BaseFragment {
+   @BindView(R.id.txt_current_temperature)
     TextView txtCurrentTemperature;
     @BindView(R.id.id_current_weather_info)
     TextView txtCurrentWeatherInfo;
@@ -98,5 +98,5 @@ public class CurrentWeatherInfoFragment extends BaseFragment {
         super.onDetach();
         mListener = null;
     }
-
+*/
 }

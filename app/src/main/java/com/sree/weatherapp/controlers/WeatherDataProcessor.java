@@ -1,18 +1,8 @@
 package com.sree.weatherapp.controlers;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.google.gson.Gson;
-import com.sree.weatherapp.common.AppConstants;
-import com.sree.weatherapp.webservice.ApiClient;
-import com.sree.weatherapp.webservice.ApiInterface;
 import com.sree.weatherapp.webservice.responsebean.WeatherSummery;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 /**
  * Controller class for handle the location data and web service response. It will give call back to
@@ -22,13 +12,13 @@ public class WeatherDataProcessor implements LocationProvider.InLocationUpdateLi
     private static WeatherDataProcessor ourInstance = new WeatherDataProcessor();
     public static final String TAG = "WeatherDataProcessor";
     private IDataProvider dataProvider;
-    Retrofit retrofit;
+   /* Retrofit retrofit;
     public void setDataProvider(IDataProvider dataProvider,Retrofit retrofit) {
         this.dataProvider = dataProvider;
         this.retrofit=retrofit;
 
     }
-
+*/
     /**
      * Function responsible for registering googleApi client. On success full connection will
      * get location update call back in onLocationUpdate function. For any error will get call back in
@@ -64,7 +54,7 @@ public class WeatherDataProcessor implements LocationProvider.InLocationUpdateLi
      * @param currentLocation
      */
     private void getWeatherUpdate(String currentLocation) {
-               ApiInterface apiService =retrofit.create(ApiInterface.class);
+              /* ApiInterface apiService =retrofit.create(ApiInterface.class);
 
         Call<WeatherSummery> call = apiService.getWeatherUpdate(AppConstants.WebServiceConstants.API_KEY, currentLocation);
         call.enqueue(new Callback<WeatherSummery>() {
@@ -86,7 +76,7 @@ public class WeatherDataProcessor implements LocationProvider.InLocationUpdateLi
             public void onFailure(Call<WeatherSummery> call, Throwable t) {
                 Log.e(TAG, t.toString());
             }
-        });
+        });*/
     }
 
     /**
