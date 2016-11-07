@@ -4,6 +4,9 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 
 import com.google.gson.Gson;
@@ -26,7 +29,9 @@ import flow.path.PathContainerView;
 import mortar.MortarScope;
 import mortar.bundler.BundleServiceRunner;
 
-public class HomeActivity extends Activity implements Flow.Dispatcher {
+public class HomeActivity extends Activity implements Flow.Dispatcher
+      //  ,NavigationView.OnNavigationItemSelectedListener
+{
 
     MortarScope mortarScope;
     FlowDelegate flowDelegate;
@@ -72,7 +77,7 @@ public class HomeActivity extends Activity implements Flow.Dispatcher {
         BundleServiceRunner.getBundleServiceRunner(this).onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
-          ButterKnife.inject(this);
+        ButterKnife.inject(this);
 
         GsonParceler parceler = new GsonParceler(new Gson());
 
@@ -81,7 +86,6 @@ public class HomeActivity extends Activity implements Flow.Dispatcher {
         flowDelegate = FlowDelegate.onCreate(nonConfig, getIntent(), savedInstanceState, parceler, History.single(new CurrentWeatherInfoScreen()), this);
 
     }
-
 
 
     @Override
@@ -160,7 +164,6 @@ public class HomeActivity extends Activity implements Flow.Dispatcher {
     }
 
 
-
     @dagger.Component(dependencies = WeatherApplication.Component.class)
     @DaggerScope(Component.class)
     public interface Component extends AppDependencies {
@@ -172,13 +175,30 @@ public class HomeActivity extends Activity implements Flow.Dispatcher {
         super.attachBaseContext(newBase);
     }
 
+
+   /* @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }*/
+
 }
-
-
-
-
-
-
 
 
  /*       extends AppCompatActivity implements OnListFragmentInteractionListener{
@@ -282,7 +302,7 @@ public class HomeActivity extends Activity implements Flow.Dispatcher {
         fragments.add(weatherInfoFragment);
         weatherInfoFragment.setArguments(args);
 
-        weatherInfoFragment = new HourlyWeatherInfoFragment();
+        weatherInfoFragment = new HourlyWeatherInfoScreen();
         args = new Bundle();
         args.putSerializable(WEATHER_SUMMERY, weatherSummery.getHourlyWeatherInfo());
         fragments.add(weatherInfoFragment);

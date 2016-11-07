@@ -1,29 +1,13 @@
 package com.sree.weatherapp.ui.fragments;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-
-import com.sree.weatherapp.R;
-import com.sree.weatherapp.common.AppConstants;
-import com.sree.weatherapp.ui.common.OnListFragmentInteractionListener;
-import com.sree.weatherapp.utils.Utils;
-import com.sree.weatherapp.webservice.responsebean.WeatherInfo;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
  * Fragment for display detail weather information.
  */
-public class WeatherDetailFragment extends Fragment {
+public class WeatherDetailFragment{
+   /*     extends Fragment {
     private WeatherInfo weatherInfo;
     OnListFragmentInteractionListener mListener;
     @BindView(R.id.txt_daily_precipitation_intensity)
@@ -62,15 +46,15 @@ public class WeatherDetailFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_weather_detail, container, false);
+        View view = inflater.inflate(R.layout.screen_weather_detail, container, false);
         ButterKnife.bind(this, view);
         populateView();
         return view;
     }
 
-    /**
+    *//**
      * Populate the weather information to view.
-     */
+     *//*
     private void populateView() {
         if (weatherInfo != null) {
             String time = Utils.getTimeFromSeconds(weatherInfo.getWeatherTime(), null);
@@ -103,6 +87,6 @@ public class WeatherDetailFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
+*/
 
 }
