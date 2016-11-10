@@ -3,6 +3,9 @@ package com.sree.weatherapp.app;
 import android.app.Application;
 
 
+import com.sree.weatherapp.module.AppModule;
+import com.sree.weatherapp.module.WebServiceModule;
+
 import mortar.MortarScope;
 
 
@@ -22,27 +25,14 @@ public class WeatherApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-
         Component component = DaggerWeatherApplication_Component.create();
         component.inject(this);
 
         mortarScope = MortarScope.buildRootScope()
                 .withService(DaggerService.SERVICE_NAME, component)
                 .build("Root");
-/*
-
-        webServiceComponent = DaggerWebServiceComponent.builder()
-                .appModule(new AppModule(this))
-                .webServiceModule(new WebServiceModule(BASE_URL))
-                .build();
-*/
-
 
     }
-
-   /* public WebServiceComponent getWebServiceComponent() {
-        return webServiceComponent;
-    }*/
 
     @dagger.Component
     @DaggerScope(Component.class)
@@ -50,5 +40,3 @@ public class WeatherApplication extends Application {
         void inject(WeatherApplication app);
     }
 }
-
-

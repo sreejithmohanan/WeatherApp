@@ -98,6 +98,8 @@ public class LoginActivity extends AppCompatActivity implements
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
+
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
         }
     }
 
